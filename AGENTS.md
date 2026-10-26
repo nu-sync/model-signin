@@ -74,7 +74,7 @@ These are invariants. Breaking one is a bug, even if the tests pass.
 - **pi compatibility.** Credentials are pi's JSON under pi's provider ids
   (`openai`, `openrouter`). Keep field names, `expires` in epoch
   milliseconds, `NEVER` for OpenRouter, and pi's error messages. When you
-  depart from pi on purpose, add it to README's "Where it departs from pi".
+  depart from pi on purpose, add it to "Where it departs from pi" in [docs/how-it-works.md](docs/how-it-works.md).
 - **The core stays generic.** Nothing outside `src/rig.rs` may name
   `rig_core`, and that module stays behind `#[cfg(feature = "rig")]`.
   `FileTokenStore` has to keep reading and locking the same files as
@@ -95,5 +95,6 @@ These are invariants. Breaking one is a bug, even if the tests pass.
 - Tests call the public API the way an app would, against the fake server, and
   assert what the user sees: the stored JSON, error text, file modes.
   A test that runs two `FileTokenStore`s over one directory stands in for two processes.
-- When behavior changes, update README.md in the same change, and
+- When behavior changes, update README.md (the short tour) and
+  docs/how-it-works.md (the details) in the same change, and
   docs/UPSTREAM.md if the change affects what rig would need.
