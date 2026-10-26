@@ -1,0 +1,46 @@
+# cargo deny, locally and in CI: licenses an MIT crate can depend on,
+# RustSec advisories, banned crates, and crates.io as the only source.
+
+[graph]
+all-features = true
+
+[advisories]
+# Vulnerabilities and unsound code always fail, and so do unmaintained
+# crates and yanked versions. An ignored advisory names its id and why.
+unmaintained = "all"
+yanked = "deny"
+ignore = []
+
+[licenses]
+# Permissive licenses only. The graph also needs Unicode-3.0 (the ICU and
+# Unicode tables), Zlib (foldhash) and CDLA-Permissive-2.0 (webpki-root-certs,
+# Mozilla's CA list as data). A crate offering a choice, such as
+# `MIT OR LGPL-2.1-or-later`, passes on its permissive option.
+allow = [
+    "Apache-2.0",
+    "BSD-3-Clause",
+    "CDLA-Permissive-2.0",
+    "ISC",
+    "MIT",
+    "Unicode-3.0",
+    "Zlib",
+]
+confidence-threshold = 0.93
+
+[licenses.private]
+# This crate itself: MIT, and not published yet.
+ignore = true
+
+[bans]
+multiple-versions = "warn"
+wildcards = "deny"
+allow-wildcard-paths = true
+deny = [
+    # TLS is rustls: nothing links a system TLS library.
+    { crate = "openssl-sys", reason = "TLS is rustls; no system TLS library" },
+    { crate = "native-tls", reason = "TLS is rustls; no system TLS library" },
+]
+
+[sources]
+unknown-registry = "deny"
+unknown-git = "deny"

@@ -1,0 +1,57 @@
+[package]
+name = "model-signin"
+description = "Sign in with ChatGPT and OpenRouter's OAuth PKCE for Rust apps, with an optional rig-core connector."
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+repository = "https://github.com/nu-sync/model-signin"
+readme = "README.md"
+# Repository tooling stays out of the published crate.
+exclude = ["/.github", "/AGENTS.md", "/justfile", "/deny.toml", "/rust-toolchain.toml"]
+keywords = ["oauth", "pkce", "openai", "openrouter", "rig"]
+categories = ["authentication", "api-bindings"]
+rust-version = "1.97.1"
+
+# docs.rs documents the rig connector too.
+[package.metadata.docs.rs]
+all-features = true
+
+[features]
+# The connector to rig-core: its token stores and the ChatGPT-token dialect.
+rig = ["dep:rig-core"]
+
+[[example]]
+name = "sign-in"
+required-features = ["rig"]
+
+# Beyond reqwest, tokio, sha2 and base64: serde and serde_json (the
+# credential is pi's JSON), getrandom (PKCE, state, ids) and thiserror.
+[dependencies]
+base64 = "0.22.1"
+getrandom = "0.4.3"
+reqwest = { version = "0.13.5", default-features = false, features = ["rustls", "form", "json"] }
+# Only with the `rig` feature. rig-core is pre-1.0 and changes its API
+# between minor releases, so this stays within 0.45. No default features, so no HTTP
+# transport: only its auth store traits and OpenAI dialect are used.
+rig-core = { version = "0.45", default-features = false, optional = true }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.154"
+sha2 = "0.10.9"
+thiserror = "2.0.21"
+tokio = { version = "1.54.1", features = ["rt", "macros", "time", "sync", "net", "io-util"] }
+
+[dev-dependencies]
+# The fake auth server in the tests.
+axum = { version = "0.8.9", default-features = false, features = ["http1", "json", "form", "tokio"] }
+# The example's two model calls go through rig's own reqwest transport.
+rig-core = { version = "0.45", default-features = false, features = ["reqwest", "rustls"] }
+tokio = { version = "1.54.1", features = ["rt-multi-thread"] }
+
+[lints.rust]
+unsafe_code = "forbid"
+unused_must_use = "deny"
+
+[lints.clippy]
+all = { level = "warn", priority = -1 }
+dbg_macro = "deny"
+todo = "deny"

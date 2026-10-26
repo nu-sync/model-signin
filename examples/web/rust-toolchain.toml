@@ -1,0 +1,5 @@
+# Topcoat 0.11 needs Rust 1.99.
+[toolchain]
+channel = "1.99.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"

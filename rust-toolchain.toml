@@ -1,0 +1,5 @@
+# rig-core 0.45 needs Rust 1.97.1.
+[toolchain]
+channel = "1.97.1"
+components = ["rustfmt", "clippy"]
+profile = "minimal"
